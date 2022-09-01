@@ -19,10 +19,10 @@ import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -30,10 +30,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.androiddevchallenge.ui.theme.MyTheme
 import com.example.androiddevchallenge.ui.theme.shapes
@@ -45,94 +44,119 @@ class MainActivity : AppCompatActivity() {
         setEdgeWithLightTheme(/*isSystemInDarkTheme()*/true)
         setContent {
             MyTheme {
-                MyApp()
+                HomePage()
             }
         }
     }
-}
 
-// Start building your app here!
-@Composable
-fun MyApp() {
-    WelcomePage()
-}
+    data class ImageItem(val name: String, @IdRes val resId: Int)
 
-@Composable
-fun WelcomePage() {
-    Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colors.primary)) {
-        Image(painter = rememberVectorPainter(ImageVector.vectorResource(if (isSystemInDarkTheme()) R.drawable.ic_dark_welcome_bg else R.drawable.ic_welcome_bg)),
-            modifier = Modifier.fillMaxSize(),
-            contentDescription = null)
-        WelcomeContent()
-    }
-}
+    @Composable
+    fun HomePage() {
+        Scaffold(bottomBar = {
 
-@Composable
-fun WelcomeContent() {
-    Column {
-        LeafImage()
-        Spacer(Modifier.height(48.dp))
-        WelcomeTitle()
-        Spacer(Modifier.height(40.dp))
-        WelcomeButton()
+
+        }
+        ) {
+            it.calculateBottomPadding()
+            LoginContent()
+
+        }
     }
 
-}
+    @Composable
+    fun BottomBar(paddingBottom: Dp = 0.dp) {
+        BottomNavigation(modifier = Modifier.fillMaxWidth().height(56.dp)
+            .background(MaterialTheme.colors.primary)) {
 
+            Image(
+                imageVector = ImageVector.vectorResource(R.drawable.ic_dark_logo),
+                contentDescription = null
+            )
+        }
 
-@Composable
-fun LeafImage() {
-    Image(painter = rememberVectorPainter(ImageVector.vectorResource(if (isSystemInDarkTheme()) R.drawable.ic_dark_welcome_illos else R.drawable.ic_welcome_illos)),
-        contentDescription = null,
-        modifier = Modifier.wrapContentSize().padding(top = 72.dp, start = 88.dp)
-    )
-}
-
-@Composable
-fun WelcomeTitle() {
-    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
-        Image(
-            painter = rememberVectorPainter(ImageVector.vectorResource(if (isSystemInDarkTheme()) R.drawable.ic_dark_logo else R.drawable.ic_logo)),
-            contentDescription = null,
-        )
-
-        Text("Beautiful home garden solutions")
     }
-}
 
-@Composable
-fun WelcomeButton() {
-    Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+
+    @Composable
+    fun LoginContent() {
+        Column(horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxWidth()) {
+            LoginTitle()
+            LoginInput()
+            Spacer(Modifier.height(16.dp))
+            LogininfoContent()
+            Spacer(Modifier.height(16.dp))
+            LoginButtonContent()
+        }
+
+    }
+
+    @Composable
+    fun LoginTitle() {
+        Text("Log in with email",
+            style = MaterialTheme.typography.h1,
+            color = MaterialTheme.colors.onBackground,
+            modifier = Modifier.paddingFromBaseline(top = 184.dp, bottom = 16.dp))
+    }
+
+    @Composable
+    fun LoginInput() {
+        Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+            LoginEditFeild("Email address")
+            Spacer(modifier = Modifier.height(8.dp))
+            LoginEditFeild("Password (8+ characters)")
+        }
+    }
+
+    @Composable
+    fun LoginEditFeild(hint: String) {
+        OutlinedTextField(value = "",
+            onValueChange = {},
+            modifier = Modifier.fillMaxWidth().height(56.dp).clip(shape = shapes.small)
+                .padding(horizontal = 16.dp),
+            placeholder = {
+                Text(text = hint,
+                    style = MaterialTheme.typography.body1,
+                    color = MaterialTheme.colors.onSurface)
+            })
+    }
+
+    @Composable
+    fun LogininfoContent() {
+        Text(modifier = Modifier.fillMaxWidth().padding(16.dp).padding(horizontal = 6.dp),
+            color = MaterialTheme.colors.onBackground,
+            text = "By click below, you agree to our _Terms of Use_ and consent to our _Privacy Policy_")
+    }
+
+    @Composable
+    fun LoginButtonContent() {
         Button(onClick = {},
-            modifier = Modifier.fillMaxWidth().height(48.dp).padding(horizontal = 16.dp)
-                .clip(shape = shapes.medium),
-            colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.secondary)) {
-            Text("Create account", style = MaterialTheme.typography.button)
-        }
-
-        TextButton(
-            onClick = {},
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp).wrapContentWidth()) {
-            Text(text = "Log in", modifier = Modifier.padding(top = 12.dp),
-                style = MaterialTheme.typography.button,
-                color = MaterialTheme.colors.onPrimary, fontWeight = FontWeight.Bold)
+            modifier = Modifier.fillMaxWidth().height(56.dp).padding(horizontal = 16.dp)
+                .clip(shapes.medium),
+            colors = ButtonDefaults.buttonColors(MaterialTheme.colors.secondary)) {
+            Text(text = "Log in",/*
+                modifier = Modifier.wrapContentSize(),*/
+                style = MaterialTheme.typography.button)
         }
     }
-}
 
-@Preview(uiMode = UI_MODE_NIGHT_NO)
-@Composable
-fun MockWelcomePageLight() {
-    MyTheme(darkTheme = false) {
-        WelcomePage()
+
+    @Preview(uiMode = UI_MODE_NIGHT_NO)
+    @Composable
+    fun MockWelcomePageLight() {
+        MyTheme(darkTheme = false) {
+            HomePage()
+        }
+    }
+
+
+    @Preview(uiMode = UI_MODE_NIGHT_YES)
+    @Composable
+    fun MockWelcomePageDark() {
+        MyTheme(darkTheme = true) {
+            HomePage()
+        }
     }
 }
 
-
-@Preview(uiMode = UI_MODE_NIGHT_YES)
-@Composable
-fun MockWelcomePageDark() {
-    MyTheme(darkTheme = true) {
-        WelcomePage()
-    }
-}
