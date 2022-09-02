@@ -161,7 +161,6 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    @Preview
     @Composable
     fun PlantCard(item: ImageItem = plantList[0]) {
         Card(modifier = Modifier.size(136.dp), shape = MaterialTheme.shapes.small,
