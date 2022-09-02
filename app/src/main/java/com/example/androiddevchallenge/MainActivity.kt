@@ -33,6 +33,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
@@ -90,8 +91,7 @@ class MainActivity : AppCompatActivity() {
         Scaffold(bottomBar = {
             BottomBar()
         }) {
-            it.calculateBottomPadding()
-            HomeContent()
+            HomeContent(it)
         }
     }
 
@@ -185,23 +185,21 @@ class MainActivity : AppCompatActivity() {
 
 
     @Composable
-    fun HomeContent() {
+    fun HomeContent(paddingValues: PaddingValues = PaddingValues(0.dp)) {
         Column(horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxWidth()) {
+            modifier = Modifier.fillMaxWidth().fillMaxHeight()) {
             SearchBar()
             BrowserContent()
             DesignGardenContent()
-
-
         }
     }
 
     @Composable
     fun DesignGardenContent() {
-        Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+        Column(modifier = Modifier.fillMaxWidth().fillMaxHeight()) {
             // The title
             // using space between to place two item at start and end
-            Row(modifier = Modifier.fillMaxWidth(),
+            Row(modifier = Modifier.fillMaxWidth().padding(16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween) {
                 Text("Design your home garden",
                     style = MaterialTheme.typography.h1,
@@ -231,10 +229,10 @@ class MainActivity : AppCompatActivity() {
     @Composable
     fun DesignItemContent(item: ImageItem = designList[0]) {
         Box(modifier = Modifier.fillMaxWidth().height(64.dp)) {
-            Row(modifier = Modifier.wrapContentWidth().fillMaxHeight()) {
+            Row(modifier = Modifier.wrapContentWidth().fillMaxHeight().padding(start = 16.dp)) {
                 Image(painter = painterResource(item.drawableId),
                     contentDescription = item.name,
-                    modifier = Modifier.size(64.dp),
+                    modifier = Modifier.size(64.dp).clip(MaterialTheme.shapes.small),
                     contentScale = ContentScale.Crop)
                 Column(modifier = Modifier.padding(start = 16.dp).fillMaxHeight()
                     .wrapContentWidth()) {
@@ -249,11 +247,16 @@ class MainActivity : AppCompatActivity() {
                         modifier = Modifier.paddingFromBaseline(top = 16.dp))
                 }
             }
-            Checkbox(checked = false,
-                onCheckedChange = {},
+            val checkStatus = remember { mutableStateOf(false) }
+            Checkbox(checked = checkStatus.value,
+                onCheckedChange = { checkStatus.value = !checkStatus.value },
                 modifier = Modifier.align(Alignment.CenterEnd))
-        }
 
+            Divider(modifier = Modifier.align(Alignment.BottomEnd).padding(start = 88.dp)
+                .fillMaxWidth(),
+                thickness = (0.5).dp,
+                color = MaterialTheme.colors.onBackground)
+        }
 
     }
 
