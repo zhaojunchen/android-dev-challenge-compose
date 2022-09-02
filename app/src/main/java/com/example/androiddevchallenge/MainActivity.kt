@@ -25,6 +25,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -60,7 +61,11 @@ class MainActivity : AppCompatActivity() {
     private val plantList = listOf(
         ImageItem("Desert chic", R.drawable.desert_chic),
         ImageItem("Tiny terrariums", R.drawable.tiny_terrariums),
-        ImageItem("Jungle Vibes", R.drawable.jungle_vibes)
+        ImageItem("Jungle Vibes", R.drawable.jungle_vibes),
+        ImageItem("Monstera", R.drawable.monstera),
+        ImageItem("Aglaonema", R.drawable.aglaonema),
+        ImageItem("Peace lily", R.drawable.peace_lily),
+        ImageItem("Fiddle leaf tree", R.drawable.fiddle_leaf),
     )
 
     private val designList = listOf(
@@ -111,7 +116,6 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-
     /*底部BottomNavigationBar的实现 较为简单*/
     @Composable
     fun BottomBar() {
@@ -135,10 +139,9 @@ class MainActivity : AppCompatActivity() {
                             color = MaterialTheme.colors.onPrimary)
                     })
             }
-
         }
-
     }
+
 
     @Composable
     fun BrowserContent() {
@@ -158,7 +161,6 @@ class MainActivity : AppCompatActivity() {
 
             }
         }
-
     }
 
     @Composable
@@ -188,7 +190,70 @@ class MainActivity : AppCompatActivity() {
             modifier = Modifier.fillMaxWidth()) {
             SearchBar()
             BrowserContent()
+            DesignGardenContent()
+
+
         }
+    }
+
+    @Composable
+    fun DesignGardenContent() {
+        Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+            // The title
+            // using space between to place two item at start and end
+            Row(modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween) {
+                Text("Design your home garden",
+                    style = MaterialTheme.typography.h1,
+                    color = MaterialTheme.colors.onBackground,
+                    modifier = Modifier.paddingFromBaseline(top = 40.dp, bottom = 16.dp)
+                        .wrapContentWidth())
+
+                Image(painter = rememberVectorPainter(ImageVector.vectorResource(R.drawable.ic_filter_list)),
+                    contentDescription = null,
+                    modifier = Modifier.padding(top = 12.dp).size(24.dp)
+                        .align(Alignment.CenterVertically))
+            }
+            // The list content
+            LazyColumn(modifier = Modifier.fillMaxWidth()) {
+                items(designList.size) { index ->
+                    if (index != 0) {
+                        Spacer(Modifier.height(8.dp))
+                    }
+                    DesignItemContent(designList[index])
+                }
+
+            }
+
+        }
+    }
+
+    @Composable
+    fun DesignItemContent(item: ImageItem = designList[0]) {
+        Box(modifier = Modifier.fillMaxWidth().height(64.dp)) {
+            Row(modifier = Modifier.wrapContentWidth().fillMaxHeight()) {
+                Image(painter = painterResource(item.drawableId),
+                    contentDescription = item.name,
+                    modifier = Modifier.size(64.dp),
+                    contentScale = ContentScale.Crop)
+                Column(modifier = Modifier.padding(start = 16.dp).fillMaxHeight()
+                    .wrapContentWidth()) {
+                    Text(text = item.name,
+                        style = MaterialTheme.typography.h2,
+                        color = MaterialTheme.colors.onBackground,
+                        modifier = Modifier.paddingFromBaseline(top = 24.dp))
+
+                    Text(text = "This is a description",
+                        style = MaterialTheme.typography.body1,
+                        color = MaterialTheme.colors.onBackground,
+                        modifier = Modifier.paddingFromBaseline(top = 16.dp))
+                }
+            }
+            Checkbox(checked = false,
+                onCheckedChange = {},
+                modifier = Modifier.align(Alignment.CenterEnd))
+        }
+
 
     }
 
